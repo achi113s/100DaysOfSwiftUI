@@ -40,10 +40,7 @@ struct ContentView: View {
                         Button {
                             flagTapped(number)
                         } label: {
-                            Image(countries[number])
-                                .renderingMode(.original)
-                                .clipShape(Capsule())
-                                .shadow(radius: 5)
+                            FlagImage(country: countries[number])
                         }
                         .buttonStyle(ScaleButtonStyle())
                     }
@@ -94,6 +91,16 @@ struct ScaleButtonStyle: ButtonStyle {
     func makeBody(configuration: Self.Configuration) -> some View {
         configuration.label
             .scaleEffect(configuration.isPressed ? 1.03 : 1)
+    }
+}
+
+struct FlagImage: View {
+    var country: String
+    var body: some View {
+        Image(country)
+            .renderingMode(.original)
+            .clipShape(Capsule())
+            .shadow(radius: 5)
     }
 }
 
