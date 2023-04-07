@@ -74,18 +74,14 @@ struct ContentView: View {
     func buttonPressed(_ number: Int) {
         if userShouldWinRound {
             if emojis[number] == pickToWin[appChoice] {
-                print("You win")
                 userScore += 1
             } else {
-                print("You lose")
                 userScore -= 1
             }
         } else {
             if emojis[number] != pickToWin[appChoice] {
-                print("You win")
                 userScore += 1
             } else {
-                print("You lose")
                 userScore -= 1
             }
         }
