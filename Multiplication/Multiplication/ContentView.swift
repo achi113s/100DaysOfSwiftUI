@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import AVFoundation
 
 struct ContentView: View {
     @State private var isGameActive: Bool = false
@@ -22,6 +23,8 @@ struct ContentView: View {
     @State private var resultMessage: String = ""
     
     @FocusState private var answerIsFocused: Bool
+    
+    @State private var player: AVAudioPlayer!
     
     var score: Double {
         return Double(numberCorrect)/Double(numberOfQuestions+2) * 100.0
@@ -200,20 +203,17 @@ struct ContentView: View {
         }
     }
     
-//    if currentQuestion == numberOfQuestions {
-//        resultTitle = "DONE"
-//        resultMessage = "Your final score is: \(score)!"
-//    }
-    
     func checkAnswer(_ answer: String) {
         if let safeAnswer = Int(answer) {
             if safeAnswer == questions[currentQuestion-1].answer {
                 resultTitle = "CORRECT"
                 resultMessage = "You got it right!"
                 numberCorrect += 1
+                playChime(correct: true)
             } else {
                 resultTitle = "WRONG"
                 resultMessage = "You got it wrong!"
+                playChime(correct: false)
             }
             
             if currentQuestion == numberOfQuestions + 2 {
@@ -222,6 +222,18 @@ struct ContentView: View {
         } else {
             resultTitle = "Can't read answer."
             resultMessage = "Unable to parse your answer."
+        }
+    }
+    
+    func playChime(correct: Bool) {
+        var audioName = "correctaudio"
+        if !correct {
+            audioName = "wrongaudio"
+        }
+        
+        if let url = Bundle.main.url(forResource: audioName, withExtension: "m4a") {
+            player = try! AVAudioPlayer(contentsOf: url)
+            player.play()
         }
     }
 }
