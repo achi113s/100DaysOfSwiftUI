@@ -14,10 +14,24 @@ struct ContentView: View {
     var body: some View {
         NavigationView {
             List {
-                ForEach(expenses.items, id: \.id) { item in
-                    Text(item.name)
+                Section {
+                    ForEach(expenses.items, id: \.id) { item in
+                        HStack {
+                            VStack(alignment: .leading) {
+                                Text(item.name)
+                                    .font(.headline)
+                                Text(item.type)
+                            }
+                            
+                            Spacer()
+                            
+                            let cur = Locale.current.currency?.identifier ?? "USD"
+                            
+                            Text(item.amount, format: .currency(code: cur))
+                        }
+                    }
+                    .onDelete(perform: removeItems)
                 }
-                .onDelete(perform: removeItems)
             }
             .navigationTitle("iExpense")
             .toolbar {
