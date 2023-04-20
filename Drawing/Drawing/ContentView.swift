@@ -55,44 +55,55 @@ struct Spirograph: Shape {
     }
 }
 
+struct Arrow: Shape {
+    var baseLength: CGFloat
+    var baseThickness: CGFloat
+    var caretWidth: CGFloat
+    var caretLength: CGFloat
+    
+//    var lineWidth: Double
+//    
+//    var animatableData: Double {
+//        get { lineWidth }
+//        set { lineWidth = newValue }
+//    }
+    
+    func path(in rect: CGRect) -> Path {
+        var path = Path()
+        
+        path.move(to: CGPoint(x: rect.midX, y: 0))
+        path.addLine(to: CGPoint(x: rect.midX - (caretWidth / 2), y: caretLength))
+        path.addLine(to: CGPoint(x: rect.midX - (baseThickness), y: caretLength))
+        path.addLine(to: CGPoint(x: rect.midX - (baseThickness), y: caretLength + baseLength))
+        path.addLine(to: CGPoint(x: rect.midX + baseThickness, y: caretLength + baseLength))
+        path.addLine(to: CGPoint(x: rect.midX + baseThickness, y: caretLength))
+        path.addLine(to: CGPoint(x: rect.midX + (caretWidth / 2), y: caretLength))
+        path.addLine(to: CGPoint(x: rect.midX, y: 0))
+        
+        path.closeSubpath()
+        
+        return path
+    }
+}
+
 struct ContentView: View {
-    @State private var innerRadius = 125.0
-    @State private var outerRadius = 75.0
-    @State private var distance = 25.0
-    @State private var amount = 1.0
-    @State private var hue = 0.6
+    @State private var baseLength: CGFloat = 200.0
+    @State private var baseThickness: CGFloat = 40.0
+    @State private var caretLength: CGFloat = 80.0
+    @State private var caretWidth: CGFloat = 190.0
+    @State private var lineWidth: CGFloat = 10
     
     var body: some View {
         VStack(spacing: 0) {
-            Spacer()
-            
-            Spirograph(innerRadius: Int(innerRadius), outerRadius: Int(outerRadius), distance: Int(distance), amount: amount)
-                .stroke(Color(hue: hue, saturation: 1.0, brightness: 1.0), lineWidth: 1)
-                .frame(width: 300, height: 300)
-            
-            Spacer()
-            
-            Group {
-                Text("Inner Radius: \(Int(innerRadius))")
-                Slider(value: $innerRadius, in: 10...150, step: 1)
-                    .padding([.horizontal, .bottom])
-                
-                Text("Outer Radius: \(Int(outerRadius))")
-                Slider(value: $outerRadius, in: 10...150, step: 1)
-                    .padding([.horizontal, .bottom])
-                
-                Text("Distance: \(Int(distance))")
-                Slider(value: $distance, in: 1...150, step: 1)
-                    .padding([.horizontal, .bottom])
-                
-                Text("Amount: \(amount, format: .number.precision(.fractionLength(2)))")
-                Slider(value: $amount)
-                    .padding([.horizontal, .bottom])
-                
-                Text("Color")
-                Slider(value: $hue)
-                    .padding(.horizontal)
-            }
+            Arrow(baseLength: baseLength, baseThickness: baseThickness, caretWidth: caretWidth, caretLength: caretLength)
+                .stroke(.blue, lineWidth: lineWidth)
+                .frame(width: 200, height: 200)
+                .onTapGesture {
+                    withAnimation {
+                        lineWidth *= 1.2
+                    }
+                }
+
         }
     }
 }
@@ -102,3 +113,44 @@ struct ContentView_Previews: PreviewProvider {
         ContentView()
     }
 }
+
+
+//@State private var innerRadius = 125.0
+//@State private var outerRadius = 75.0
+//@State private var distance = 25.0
+//@State private var amount = 1.0
+//@State private var hue = 0.6
+//
+//var body: some View {
+//    VStack(spacing: 0) {
+//        Spacer()
+//
+//        Spirograph(innerRadius: Int(innerRadius), outerRadius: Int(outerRadius), distance: Int(distance), amount: amount)
+//            .stroke(Color(hue: hue, saturation: 1.0, brightness: 1.0), lineWidth: 1)
+//            .frame(width: 300, height: 300)
+//
+//        Spacer()
+//
+//        Group {
+//            Text("Inner Radius: \(Int(innerRadius))")
+//            Slider(value: $innerRadius, in: 10...150, step: 1)
+//                .padding([.horizontal, .bottom])
+//
+//            Text("Outer Radius: \(Int(outerRadius))")
+//            Slider(value: $outerRadius, in: 10...150, step: 1)
+//                .padding([.horizontal, .bottom])
+//
+//            Text("Distance: \(Int(distance))")
+//            Slider(value: $distance, in: 1...150, step: 1)
+//                .padding([.horizontal, .bottom])
+//
+//            Text("Amount: \(amount, format: .number.precision(.fractionLength(2)))")
+//            Slider(value: $amount)
+//                .padding([.horizontal, .bottom])
+//
+//            Text("Color")
+//            Slider(value: $hue)
+//                .padding(.horizontal)
+//        }
+//    }
+//}
