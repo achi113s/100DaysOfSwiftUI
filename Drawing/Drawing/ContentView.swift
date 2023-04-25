@@ -7,150 +7,54 @@
 
 import SwiftUI
 
-struct Spirograph: Shape {
-    let innerRadius: Int
-    let outerRadius: Int
-    let distance: Int
-    let amount: Double
+struct ColorCyclingRect: View {
+    var amount = 0.0
+    var steps = 150
     
-    func gcd(_ a: Int, _ b: Int) -> Int {
-        var a = a
-        var b = b
-        
-        while b != 0 {
-            let temp = b
-            b = a % b
-            a = temp
-        }
-        
-        return a
-    }
-    
-    func path(in rect: CGRect) -> Path {
-        let divisor = gcd(innerRadius, outerRadius)
-        
-        let outerRadius = Double(self.outerRadius)
-        let innerRadius = Double(self.innerRadius)
-        let distance = Double(self.distance)
-        
-        let difference = innerRadius - outerRadius
-        let endPoint = ceil(2 * Double.pi * outerRadius / Double(divisor)) * amount
-        
-        var path = Path()
-        
-        for theta in stride(from: 0, to: endPoint, by: 0.01) {
-            var x = difference * cos(theta) + distance * cos(difference / outerRadius * theta)
-            var y = difference * sin(theta) - distance * sin(difference / outerRadius * theta)
-            
-            x += rect.width / 2
-            y += rect.height / 2
-            
-            if theta == 0 {
-                path.move(to: CGPoint(x: x, y: y))
-            } else {
-                path.addLine(to: CGPoint(x: x, y: y))
+    var body: some View {
+        ZStack {
+            ForEach(0..<steps, id: \.self) { value in
+                Rectangle()
+                    .inset(by: Double(value))
+                    .strokeBorder(
+                        LinearGradient(colors: [
+                            color(for: value, brightness: 1),
+                            color(for: value, brightness: 0.5)
+                        ],
+                        startPoint: .top, endPoint: .bottom),
+                        lineWidth: 2)
             }
         }
-        return path
+        .drawingGroup()
     }
-}
-
-struct Arrow: Shape {
-    var baseLength: CGFloat
-    var baseThickness: CGFloat
-    var caretWidth: CGFloat
-    var caretLength: CGFloat
     
-//    var lineWidth: Double
-//    
-//    var animatableData: Double {
-//        get { lineWidth }
-//        set { lineWidth = newValue }
-//    }
-    
-    func path(in rect: CGRect) -> Path {
-        var path = Path()
+    func color(for value: Int, brightness: Double) -> Color {
+        var targetHue = Double(value) / Double(steps) + amount
         
-        path.move(to: CGPoint(x: rect.midX, y: 0))
-        path.addLine(to: CGPoint(x: rect.midX - (caretWidth / 2), y: caretLength))
-        path.addLine(to: CGPoint(x: rect.midX - (baseThickness), y: caretLength))
-        path.addLine(to: CGPoint(x: rect.midX - (baseThickness), y: caretLength + baseLength))
-        path.addLine(to: CGPoint(x: rect.midX + baseThickness, y: caretLength + baseLength))
-        path.addLine(to: CGPoint(x: rect.midX + baseThickness, y: caretLength))
-        path.addLine(to: CGPoint(x: rect.midX + (caretWidth / 2), y: caretLength))
-        path.addLine(to: CGPoint(x: rect.midX, y: 0))
+        if targetHue > 1 {
+            targetHue -= 1
+        }
         
-        path.closeSubpath()
-        
-        return path
+        return Color(hue: targetHue, saturation: 1, brightness: brightness)
     }
 }
 
 struct ContentView: View {
-    @State private var baseLength: CGFloat = 200.0
-    @State private var baseThickness: CGFloat = 40.0
-    @State private var caretLength: CGFloat = 80.0
-    @State private var caretWidth: CGFloat = 190.0
-    @State private var lineWidth: CGFloat = 10
+    @State private var colorCycle = 0.0
     
     var body: some View {
-        VStack(spacing: 0) {
-            Arrow(baseLength: baseLength, baseThickness: baseThickness, caretWidth: caretWidth, caretLength: caretLength)
-                .stroke(.blue, lineWidth: lineWidth)
-                .frame(width: 200, height: 200)
-                .onTapGesture {
-                    withAnimation {
-                        lineWidth *= 1.2
-                    }
-                }
-
+        VStack {
+            ColorCyclingRect(amount: colorCycle)
+                .frame(width: 300, height: 300)
+            
+            Slider(value: $colorCycle)
         }
     }
 }
+
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
         ContentView()
     }
 }
-
-
-//@State private var innerRadius = 125.0
-//@State private var outerRadius = 75.0
-//@State private var distance = 25.0
-//@State private var amount = 1.0
-//@State private var hue = 0.6
-//
-//var body: some View {
-//    VStack(spacing: 0) {
-//        Spacer()
-//
-//        Spirograph(innerRadius: Int(innerRadius), outerRadius: Int(outerRadius), distance: Int(distance), amount: amount)
-//            .stroke(Color(hue: hue, saturation: 1.0, brightness: 1.0), lineWidth: 1)
-//            .frame(width: 300, height: 300)
-//
-//        Spacer()
-//
-//        Group {
-//            Text("Inner Radius: \(Int(innerRadius))")
-//            Slider(value: $innerRadius, in: 10...150, step: 1)
-//                .padding([.horizontal, .bottom])
-//
-//            Text("Outer Radius: \(Int(outerRadius))")
-//            Slider(value: $outerRadius, in: 10...150, step: 1)
-//                .padding([.horizontal, .bottom])
-//
-//            Text("Distance: \(Int(distance))")
-//            Slider(value: $distance, in: 1...150, step: 1)
-//                .padding([.horizontal, .bottom])
-//
-//            Text("Amount: \(amount, format: .number.precision(.fractionLength(2)))")
-//            Slider(value: $amount)
-//                .padding([.horizontal, .bottom])
-//
-//            Text("Color")
-//            Slider(value: $hue)
-//                .padding(.horizontal)
-//        }
-//    }
-//}
