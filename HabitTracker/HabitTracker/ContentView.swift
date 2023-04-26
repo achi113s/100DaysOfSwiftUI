@@ -8,26 +8,38 @@
 import SwiftUI
 
 struct ContentView: View {
+    @StateObject var habits = Habits()
     @State private var showAddHabit = false
     
     var body: some View {
         NavigationView {
             List {
-                Text("hello")
+                ForEach(habits.items, id: \.id) { item in
+                    NavigationLink(destination: HabitDetailView(habits: habits, habit: item)) {
+                        HStack {
+                            VStack(alignment: .leading) {
+                                Text(item.name)
+                                Text(item.description)
+                            }
+                            Spacer()
+                            Text(item.streak > 1 ? "\(item.streak) 🔥" : "\(item.streak)")
+                        }
+                    }
+                }
             }
             .navigationTitle("iStreak")
             .toolbar {
                 Button {
-                    
+                    showAddHabit = true
                 } label: {
                     Image(systemName: "plus")
                 }
             }
-            .tint(.black)
             .sheet(isPresented: $showAddHabit) {
-                AddHabitView()
+                AddHabitView(habits: habits)
             }
         }
+        .tint(.black)
     }
 }
 
