@@ -12,25 +12,30 @@ struct HabitDetailView: View {
     @State var habit: Habit
     
     var body: some View {
-        NavigationView {
-            VStack {
-                Spacer()
-                Text("Description: \(habit.description)")
-                    .font(.title.bold())
-                Spacer()
-                Text(habit.streak > 1 ? "\(habit.streak) 🔥" : "\(habit.streak)")
+        VStack {
+            Spacer()
+            Form {
+                Text("\(habit.name)")
                     .font(.largeTitle)
-                
-                Button {
-                    incrementStreak()
-                } label: {
-                    Text("Complete!")
-                        .bold()
+                Section("Description") {
+                    Text("\(habit.name)")
                 }
-                .buttonStyle(.bordered)
-                Spacer()
+                Divider()
+                Section("Streak") {
+                    let ending: String = habit.streak > 1 || habit.streak == 0 ? " times!" : " time!"
+                    let streakDescription: String = "You've completed this \(habit.streak)\(ending)"
+                    Text(streakDescription)
+                }
+            }.scrollContentBackground(.hidden)
+                .scrollDisabled(true)
+            Button {
+                incrementStreak()
+            } label: {
+                Text("Complete!")
+                    .font(.largeTitle)
             }
-            .navigationTitle(habit.name)
+            .buttonStyle(.bordered)
+            Spacer()
         }
         .tint(.black)
     }

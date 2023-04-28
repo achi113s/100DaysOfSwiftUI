@@ -19,6 +19,7 @@ struct ContentView: View {
                         HStack {
                             VStack(alignment: .leading) {
                                 Text(item.name)
+                                    .font(Font.headline)
                                 Text(item.description)
                             }
                             Spacer()
@@ -26,6 +27,7 @@ struct ContentView: View {
                         }
                     }
                 }
+                .scrollContentBackground(.hidden)
             }
             .navigationTitle("iStreak")
             .toolbar {
