@@ -14,6 +14,8 @@ class OrderClass: ObservableObject, Codable {
     
     @Published var order = OrderStruct()
     
+    init() {}
+    
     func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         
