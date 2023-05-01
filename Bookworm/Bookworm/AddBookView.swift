@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import RiveRuntime
 
 struct AddBookView: View {
     @Environment(\.managedObjectContext) var moc
@@ -36,6 +37,7 @@ struct AddBookView: View {
                 Section {
                     TextEditor(text: $review)
                     RatingView(rating: $rating)
+                    RatingAnimationView()
                 } header: {
                     Text("Write a Review")
                 }
@@ -67,6 +69,12 @@ struct AddBookView: View {
                 }
             }
         }
+    }
+}
+
+struct RatingAnimationView: View {
+    var body: some View {
+        RiveViewModel(fileName: "rating_animation", fit: .fitHeight,alignment: .centerLeft).view()
     }
 }
 
