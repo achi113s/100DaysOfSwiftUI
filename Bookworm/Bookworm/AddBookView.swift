@@ -20,6 +20,8 @@ struct AddBookView: View {
     
     let genres = ["Fantasy", "Horror", "Kids", "Mystery", "Poetry", "Romance", "Thriller"]
     
+    let ratingAnimation = RiveViewModel(fileName: "rating_animation", stateMachineName: "State Machine 1", fit: .fitHeight, alignment: .centerLeft)
+    
     var body: some View {
         NavigationView {
             Form {
@@ -37,7 +39,7 @@ struct AddBookView: View {
                 Section {
                     TextEditor(text: $review)
                     RatingView(rating: $rating)
-                    RatingAnimationView()
+                    ratingAnimation.view()
                 } header: {
                     Text("Write a Review")
                 }
@@ -69,12 +71,6 @@ struct AddBookView: View {
                 }
             }
         }
-    }
-}
-
-struct RatingAnimationView: View {
-    var body: some View {
-        RiveViewModel(fileName: "rating_animation", fit: .fitHeight,alignment: .centerLeft).view()
     }
 }
 
