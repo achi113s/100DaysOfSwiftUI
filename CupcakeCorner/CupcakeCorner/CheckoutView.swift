@@ -52,6 +52,11 @@ struct CheckoutView: View {
         }
     }
     
+    
+    // The 'async' indicates this function can go to sleep while some code inside it,
+    // which may take a long time to run, is running.
+    // The code that can take a second to run is then labeled with 'await', meaning
+    // that we are aware a sleep might happen.
     func placeOrder() async {
         guard let encoded = try? JSONEncoder().encode(orderClass) else {
             print("Failed to encode order.")
