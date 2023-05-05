@@ -24,11 +24,39 @@ extension CachedUser {
     @NSManaged public var email: String?
     @NSManaged public var address: String?
     @NSManaged public var about: String?
-    @NSManaged public var registered: String?
+    @NSManaged public var registered: Date?
     @NSManaged public var tags: String?
-    @NSManaged public var friends: String?
     @NSManaged public var friend: NSSet?
 
+    public var wrappedID: UUID { id ?? UUID() }
+    
+    public var wrappedName: String { name ?? "Unknown Name" }
+    
+    public var wrappedCompany: String { company ?? "Unknown Company" }
+    
+    public var wrappedEmail: String { email ?? "Unknown Email" }
+    
+    public var wrappedAddress: String { address ?? "Unknown Address" }
+    
+    public var wrappedAbout: String { about ?? "No information about user." }
+    
+    public var wrappedRegistered: Date { registered ?? Date() }
+    
+    public var wrappedTags: [String] {
+        if let safeTags = tags {
+            return safeTags.components(separatedBy: ",")
+        }
+        
+        return [String]()
+    }
+    
+    public var friendArray: [CachedFriend] {
+        let set = friend as? Set<CachedFriend> ?? []
+        
+        return set.sorted {
+            $0.wrappedName < $1.wrappedName
+        }
+    }
 }
 
 // MARK: Generated accessors for friend
