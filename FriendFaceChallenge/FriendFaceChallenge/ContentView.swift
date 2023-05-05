@@ -20,6 +20,7 @@ struct ContentView: View {
                         Circle()
                             .fill(user.isActive ? .green : .red)
                             .frame(maxWidth: 10)
+                            .opacity(0.8)
                     }
                 }
             }
