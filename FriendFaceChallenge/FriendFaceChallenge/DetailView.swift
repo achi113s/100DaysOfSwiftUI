@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct DetailView: View {
-    @State var user: User
+    let user: CachedUser
     
     var body: some View {
         Form {
@@ -25,9 +25,9 @@ struct DetailView: View {
                     
                     Spacer()
                     VStack {
-                        Text("\(user.name), \(user.age)")
+                        Text("\(user.wrappedName), \(user.age)")
                             .font(.title2)
-                        Text("Member Since: \(user.registered.formatted(date: .abbreviated, time: .omitted))")
+                        Text("Member Since: \(user.wrappedRegistered.formatted(date: .abbreviated, time: .omitted))")
                             .font(.caption2)
                     }
                     Circle()
@@ -37,38 +37,30 @@ struct DetailView: View {
             }
             
             Section("Contact") {
-                Text(user.address)
+                Text(user.wrappedAddress)
             }
             
             Section("About") {
-                Text(user.about)
+                Text(user.wrappedAbout)
             }
             
             Section("Friends") {
-                List(user.friends, id: \.id) { friend in
+                List(user.friendsArray, id: \.id) { friend in
                     HStack {
-                        Text(friend.name)
+                        Text(friend.wrappedName)
                     }
                 }
             }
             
             Section("Tags") {
-                List(user.tags, id: \.self) { tag in
+                List(user.wrappedTags.components(separatedBy: ","), id: \.self) { tag in
                     HStack {
                         Text(tag)
                     }
                 }
             }
         }
-        .navigationTitle("\(user.name)")
+        .navigationTitle("\(user.wrappedName)")
         .navigationBarTitleDisplayMode(.inline)
-    }
-}
-
-struct DetailView_Previews: PreviewProvider {
-    static let user = User(id: UUID(), isActive: true, name: "Homer Simpson", age: 48, company: "Nuclear", email: "homer.simpson@springville.com", address: "123 St., Springville, IL", about: "He's big.", registered: Date(), tags: ["big", "yellow"], friends: [Friend(id: UUID(), name: "Marge Simpson")])
-    
-    static var previews: some View {
-        DetailView(user: user)
     }
 }

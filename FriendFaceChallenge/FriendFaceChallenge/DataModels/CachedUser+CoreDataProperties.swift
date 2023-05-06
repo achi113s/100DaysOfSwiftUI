@@ -26,8 +26,9 @@ extension CachedUser {
     @NSManaged public var about: String?
     @NSManaged public var registered: Date?
     @NSManaged public var tags: String?
-    @NSManaged public var friend: NSSet?
+    @NSManaged public var friends: NSSet?
 
+    
     public var wrappedID: UUID { id ?? UUID() }
     
     public var wrappedName: String { name ?? "Unknown Name" }
@@ -40,18 +41,12 @@ extension CachedUser {
     
     public var wrappedAbout: String { about ?? "No information about user." }
     
-    public var wrappedRegistered: Date { registered ?? Date() }
+    public var wrappedRegistered: Date { registered ?? Date.now }
     
-    public var wrappedTags: [String] {
-        if let safeTags = tags {
-            return safeTags.components(separatedBy: ",")
-        }
-        
-        return [String]()
-    }
+    public var wrappedTags: String { tags ?? "" }
     
-    public var friendArray: [CachedFriend] {
-        let set = friend as? Set<CachedFriend> ?? []
+    public var friendsArray: [CachedFriend] {
+        let set = friends as? Set<CachedFriend> ?? []
         
         return set.sorted {
             $0.wrappedName < $1.wrappedName
@@ -59,20 +54,20 @@ extension CachedUser {
     }
 }
 
-// MARK: Generated accessors for friend
+// MARK: Generated accessors for friends
 extension CachedUser {
 
-    @objc(addFriendObject:)
-    @NSManaged public func addToFriend(_ value: CachedFriend)
+    @objc(addFriendsObject:)
+    @NSManaged public func addToFriends(_ value: CachedFriend)
 
-    @objc(removeFriendObject:)
-    @NSManaged public func removeFromFriend(_ value: CachedFriend)
+    @objc(removeFriendsObject:)
+    @NSManaged public func removeFromFriends(_ value: CachedFriend)
 
-    @objc(addFriend:)
-    @NSManaged public func addToFriend(_ values: NSSet)
+    @objc(addFriends:)
+    @NSManaged public func addToFriends(_ values: NSSet)
 
-    @objc(removeFriend:)
-    @NSManaged public func removeFromFriend(_ values: NSSet)
+    @objc(removeFriends:)
+    @NSManaged public func removeFromFriends(_ values: NSSet)
 
 }
 
