@@ -5,17 +5,27 @@
 //  Created by Giorgio Latour on 5/6/23.
 //
 
+import CoreImage
+import CoreImage.CIFilterBuiltins
 import SwiftUI
 
 struct ContentView: View {
+    @State private var image: Image?
+    @State private var showingImagePicker: Bool = false
+    
     var body: some View {
         VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundColor(.accentColor)
-            Text("Hello, world!")
+            image?
+                .resizable()
+                .scaledToFit()
+            
+            Button("Select Image") {
+                showingImagePicker = true
+            }
         }
-        .padding()
+        .sheet(isPresented: $showingImagePicker, content: {
+            ImagePicker()
+        })
     }
 }
 
