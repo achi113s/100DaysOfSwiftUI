@@ -22,7 +22,7 @@ extension EditView {
         
         init(location: Location) {
             self.location = location
-            self.newLocation = location
+            self.newLocation = Location.example
             self.name = location.name
             self.description = location.description
         }

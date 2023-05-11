@@ -68,6 +68,7 @@ extension ContentView {
                         }
                     } else {
                         // biometrics failed
+                        print("biometrics failed")
                         Task { @MainActor in
                             self.authFailed = true
                         }
@@ -75,6 +76,7 @@ extension ContentView {
                 }
             } else {
                 // no biometrics available
+                print("no biometrics available")
                 Task { @MainActor in
                     self.authFailed = true
                 }
