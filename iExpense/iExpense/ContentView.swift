@@ -10,6 +10,7 @@ import SwiftUI
 struct ContentView: View {
     @StateObject var expenses = Expenses()
     @State private var showingAddExpense: Bool = false
+    let cur = Locale.current.currency?.identifier ?? "USD"
     
     var body: some View {
         NavigationView {
@@ -25,10 +26,11 @@ struct ContentView: View {
                             
                             Spacer()
                             
-                            let cur = Locale.current.currency?.identifier ?? "USD"
-                            
                             Text(item.amount, format: .currency(code: cur))
                         }
+                        .accessibilityElement(children: .ignore)
+                        .accessibilityLabel("\(item.name) \(item.amount) \(cur)")
+                        .accessibilityHint(item.type)
                     }
                     .onDelete(perform: removeItems)
                 }
