@@ -11,10 +11,6 @@ import SwiftUI
 import UserNotifications
 
 struct ProspectsView: View {
-    enum FilterType {
-        case none, contacted, uncontacted
-    }
-    
     @EnvironmentObject var prospects: Prospects
     
     var filteredProspects: [Prospect] {
@@ -30,7 +26,14 @@ struct ProspectsView: View {
     
     let filter: FilterType
     
+    @State var sortType: SortType {
+        didSet {
+            prospects.sortBy(sortType)
+        }
+    }
+    
     @State private var isShowingScanner = false
+    @State private var isShowingConfirmationDialog = false
     
     var body: some View {
         NavigationView {
@@ -45,6 +48,8 @@ struct ProspectsView: View {
                             Text(prospect.name)
                                 .font(.headline)
                             Text(prospect.emailAddress)
+                                .foregroundColor(.secondary)
+                            Text("Met On: \(prospect.dateMet.formatted(date: .abbreviated, time: .omitted))")
                                 .foregroundColor(.secondary)
                         }
                     }
@@ -81,6 +86,12 @@ struct ProspectsView: View {
                 } label: {
                     Label("Scan", systemImage: "qrcode.viewfinder")
                 }
+                
+                Button {
+                    isShowingConfirmationDialog = true
+                } label: {
+                    Label("Sort", systemImage: "contextualmenu.and.cursorarrow")
+                }
             }
             .sheet(isPresented: $isShowingScanner) {
                 CodeScannerView(
@@ -88,6 +99,14 @@ struct ProspectsView: View {
                     simulatedData: "Giorgio Latour\ngiorgio@email.com",
                     completion: handleScan
                 )
+            }
+            .confirmationDialog("Sort People", isPresented: $isShowingConfirmationDialog) {
+                Button("Name (A to Z)") { withAnimation { sortType = .byNameAsc } }
+                Button("Name (Z to A)") { withAnimation { sortType = .byNameDesc } }
+                Button("Date (Old to New)") { withAnimation { sortType = .byDateAsc } }
+                Button("Date (New to Old)") { withAnimation { sortType = .byDateDesc } }
+            } message: {
+                Text("Sort People By")
             }
         }
     }
@@ -158,7 +177,7 @@ struct ProspectsView: View {
 
 struct ProspectsView_Previews: PreviewProvider {
     static var previews: some View {
-        ProspectsView(filter: .none)
+        ProspectsView(filter: .none, sortType: .byNameAsc)
             .environmentObject(Prospects())
     }
 }
