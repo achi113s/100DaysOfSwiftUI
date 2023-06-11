@@ -90,7 +90,7 @@ struct ProspectsView: View {
                 Button {
                     isShowingConfirmationDialog = true
                 } label: {
-                    Label("Sort", systemImage: "contextualmenu.and.cursorarrow")
+                    Label("Sort", systemImage: "list.bullet")
                 }
             }
             .sheet(isPresented: $isShowingScanner) {
