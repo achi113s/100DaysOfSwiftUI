@@ -10,7 +10,8 @@ import SwiftUI
 struct ContentView: View {
     @Environment(\.accessibilityDifferentiateWithoutColor) var differentiateWithoutColor
     @Environment(\.accessibilityVoiceOverEnabled) var voiceOverEnabled
-    @State private var cards = [Card]()
+    
+    @StateObject var cards = Cards()
     
     @State private var timeRemaining: Int = 100
     let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
@@ -36,20 +37,23 @@ struct ContentView: View {
                     .clipShape(Capsule())
                 
                 ZStack {
-                    ForEach(Array(cards.enumerated()), id: \.element) { item in
+                    ForEach(Array(cards.cards.enumerated()), id: \.element) { item in
                         CardView(card: item.element) { reinsert in
                             withAnimation {
-                                removeCard(at: item.offset, reinsert: reinsert)
+                                cards.removeCard(at: item.offset, reinsert: reinsert)
+                                if cards.cards.isEmpty {
+                                    isActive = false
+                                }
                             }
                         }
-                        .stacked(at: item.offset, in: cards.count)
-                        .allowsHitTesting(item.offset == cards.count - 1)  // only allow top card to be swiped
-                        .accessibilityHidden(item.offset < cards.count - 1) // allow accessibility like voice over only for top card
+                        .stacked(at: item.offset, in: cards.cards.count)
+                        .allowsHitTesting(item.offset == cards.cards.count - 1)  // only allow top card to be swiped
+                        .accessibilityHidden(item.offset < cards.cards.count - 1) // allow accessibility like voice over only for top card
                     }
                 }
                 .allowsTightening(timeRemaining > 0)
                 
-                if cards.isEmpty {
+                if cards.cards.isEmpty {
                     Button("Start Again", action: resetCards)
                         .padding()
                         .background(.white)
@@ -85,7 +89,10 @@ struct ContentView: View {
                     HStack {
                         Button {
                             withAnimation {
-                                removeCard(at: cards.count - 1, reinsert: true)
+                                cards.removeCard(at: cards.cards.count - 1, reinsert: true)
+                                if cards.cards.isEmpty {
+                                    isActive = false
+                                }
                             }
                         } label: {
                             Image(systemName: "xmark.circle")
@@ -100,7 +107,10 @@ struct ContentView: View {
                         
                         Button {
                             withAnimation {
-                                removeCard(at: cards.count - 1, reinsert: false)
+                                cards.removeCard(at: cards.cards.count - 1, reinsert: false)
+                                if cards.cards.isEmpty {
+                                    isActive = false
+                                }
                             }
                         } label: {
                             Image(systemName: "checkmark.circle")
@@ -126,43 +136,24 @@ struct ContentView: View {
         }
         .onChange(of: scenePhase) { newPhase in
             if newPhase == .active {
-                if cards.isEmpty == false {
+                if cards.cards.isEmpty == false {
                     isActive = true
                 }
             } else {
                 isActive = false
             }
         }
-        .sheet(isPresented: $showingEditScreen, onDismiss: resetCards, content: EditCards.init)
+        .sheet(isPresented: $showingEditScreen, onDismiss: resetCards) {
+            EditCards()
+                .environmentObject(cards)
+        }
         .onAppear(perform: resetCards)
-    }
-    
-    func loadData() {
-        if let data = UserDefaults.standard.data(forKey: "Cards") {
-            if let decoded = try? JSONDecoder().decode([Card].self, from: data) {
-                cards = decoded
-            }
-        }
-    }
-    
-    func removeCard(at index: Int, reinsert: Bool) {
-        guard index >= 0 else { return }
-        
-        if reinsert {
-            cards.move(fromOffsets: IndexSet(integer: index), toOffset: 0)
-        } else {
-            cards.remove(at: index)
-        }
-        
-        if cards.isEmpty {
-            isActive = false
-        }
     }
     
     func resetCards() {
         timeRemaining = 100
         isActive = true
-        loadData()
+        cards.reloadCards()
     }
 }
 
