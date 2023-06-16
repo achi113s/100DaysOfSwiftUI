@@ -14,10 +14,10 @@ import SwiftUI
 
 struct ContentView: View {
     var body: some View {
-        Text("Hello, World!")
-            .background(.red)
-            .padding(20)
-            .background(.yellow)
+//        Text("Hello, World!")
+//            .background(.red)
+//            .padding(20)
+//            .background(.yellow)
         
         // SwiftUI: You can have the whole screen ContentView, how much do you need?
         // ContentView: You can have the whole screen yellowBackground. How much do you need?
@@ -30,6 +30,18 @@ struct ContentView: View {
         // YellowBackground: I need X by Y plus 20 points on each side.
         // ContentView: Hey SwiftUI, I need X by Y plus 20 points on each side!
         // SwiftUI: Ok great, I'll center you.
+        
+        Image("choonsik")
+            .frame(width: 100, height: 100)
+            .border(.blue)
+        
+        // ^^ Here, ContentView offers the whole screen to the frame view. It says
+        // it needs 100 by 100 space. Then, the image, being a child of the frame
+        // and not being resizeable, says it needs a larger area.
+        // The image gets positioned in the
+        // center of the frame with the dimenions it wants, even though
+        // the frame is specified to be 100 by 100. If we add a blue border,
+        // we can see that the frame is there with a huge image in the center.
     }
 }
 
