@@ -12,7 +12,7 @@ import SwiftUI
 // 2. Based on that information, the child then chooses its own size and the parent must respect that choice.
 // 3. The parent then positions the child in its coordinate space.
 
-struct ContentView: View {
+struct ContentViewPartOne: View {
     var body: some View {
         //        Text("Hello, World!")
         //            .background(.red)
@@ -134,9 +134,9 @@ struct ContentView: View {
     }
 }
 
-struct ContentView_Previews: PreviewProvider {
+struct ContentViewPartOne_Previews: PreviewProvider {
     static var previews: some View {
-        ContentView()
+        ContentViewPartOne()
     }
 }
 

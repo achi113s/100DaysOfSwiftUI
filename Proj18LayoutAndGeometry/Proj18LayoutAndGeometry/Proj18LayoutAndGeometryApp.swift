@@ -11,7 +11,7 @@ import SwiftUI
 struct Proj18LayoutAndGeometryApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            ContentViewPartThree()
         }
     }
 }
