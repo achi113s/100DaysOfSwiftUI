@@ -10,19 +10,21 @@ import SwiftUI
 struct ContentView: View {
     @State private var dieOneValue = 1
     @State private var dieTwoValue = 1
-    @State private var maxValue = 4
+    @State private var dieSides = 4
     @State private var showingSettingsView = false
     
     @StateObject private var rolls = DiceRolls()
     
     var body: some View {
         NavigationView {
-            VStack {
+            VStack(spacing: 36) {
+                Spacer()
+                
                 HStack(spacing: 20) {
                     Button {
                         withAnimation {
-                            dieOneValue = Int.random(in: 1...maxValue)
-                            dieTwoValue = Int.random(in: 1...maxValue)
+                            dieOneValue = Int.random(in: 1...dieSides)
+                            dieTwoValue = Int.random(in: 1...dieSides)
                             
                             rolls.addRoll(
                                 DiceRoll(
@@ -33,14 +35,15 @@ struct ContentView: View {
                         }
                     } label: {
                         Text("Roll Dice")
-                            .foregroundColor(.black)
+                            .font(.title2)
                     }
                     .buttonStyle(.bordered)
                     
                     HStack {
                         Text("Sides:")
-                        Picker("Sides", selection: $maxValue) {
-                            ForEach([4, 6, 8, 10, 12, 20, 100], id: \.self) { sides in
+                            .font(.title2)
+                        Picker("Sides", selection: $dieSides) {
+                            ForEach(rolls.possibleSides, id: \.self) { sides in
                                 Text("\(sides)")
                             }
                         }
@@ -53,6 +56,8 @@ struct ContentView: View {
                 }
                 
                 Text("Total: \(dieOneValue + dieTwoValue)")
+                    .font(.title)
+                
                 
                 Form {
                     Section("Previous Rolls") {
@@ -66,7 +71,7 @@ struct ContentView: View {
                     }
                 }
             }
-            .navigationTitle("Dice Roller")
+            .navigationTitle("Dice Roller 🎲")
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button {
@@ -81,28 +86,7 @@ struct ContentView: View {
                 SettingsView()
             }
         }
-    }
-}
-
-struct DieView: View {
-    var dieValue: String
-    
-    var body: some View {
-        ZStack {
-            RoundedRectangle(cornerRadius: 15)
-                .fill(.black)
-                .frame(width: 100, height: 100)
-            RoundedRectangle(cornerRadius: 10)
-                .fill(.white)
-                .frame(width: 85, height: 85)
-            Text(dieValue)
-                .font(.largeTitle)
-                .fontWeight(.bold)
-        }
-    }
-    
-    init(dieValue: String = "1") {
-        self.dieValue = dieValue
+        .environmentObject(rolls)
     }
 }
 

@@ -19,7 +19,9 @@ struct DiceRoll: Codable, Identifiable, Hashable {
 @MainActor class DiceRolls: ObservableObject {
     @Published private(set) var rolls: [DiceRoll]
     
-    let savePath = FileManager.documentsDirectory.appendingPathExtension("DiceRolls")
+    var possibleSides: [Int] = [4, 6, 8, 10, 12, 20, 100]
+    
+    let savePath = FileManager.documentsDirectory.appendingPathComponent("DiceRolls", conformingTo: .utf8PlainText)
     
     init() {
         do {
@@ -40,12 +42,18 @@ struct DiceRoll: Codable, Identifiable, Hashable {
         if let index = rolls.firstIndex(of: roll) {
             rolls.remove(at: index)
         }
+        saveRolls()
+    }
+    
+    func deleteAllRolls() {
+        rolls.removeAll(keepingCapacity: true)
+        saveRolls()
     }
     
     private func saveRolls() {
         do {
             let data = try JSONEncoder().encode(rolls)
-            try data.write(to: savePath, options: [.atomic, .completeFileProtection])
+            try data.write(to: savePath, options: [.atomic])
         } catch {
             print("Could not save dice rolls: \(error.localizedDescription)")
         }
