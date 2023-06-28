@@ -20,6 +20,10 @@ struct Resort: Codable, Identifiable {
     let runs: Int
     let facilities: [String]
     
+    var facilityTypes: [Facility] {
+        facilities.map(Facility.init)
+    }
+    
     // static let in a struct is essentially a lazy variable since it's only
     // created right before it is referenced
     static let allResorts: [Resort] = Bundle.main.decode("resorts.json")
